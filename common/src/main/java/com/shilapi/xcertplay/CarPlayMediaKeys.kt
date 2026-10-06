@@ -10,6 +10,7 @@ import android.media.AudioManager
 import android.media.MediaMetadata
 import android.media.session.MediaSession
 import android.media.session.PlaybackState
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -50,7 +51,12 @@ internal object CarPlayMediaKeys {
     private var artworkOwner: Any? = null
     private var controller: CarPlayController? = null
     private var session: MediaSession? = null
-    private var focusRequest: AudioFocusRequest? = null
+    private var focusRequest: Any? = null
+    private val focusListener = AudioManager.OnAudioFocusChangeListener { change ->
+        Log.i(TAG, "audio focus change=$change")
+        // Only a permanent loss moves the car's media keys elsewhere; transient losses come back.
+        if (change == AudioManager.AUDIOFOCUS_LOSS) synchronized(this) { focusHeld = false }
+    }
     private var focusHeld = false
     private var appContext: Context? = null
     private var mediaAudioActive = false
@@ -148,7 +154,7 @@ internal object CarPlayMediaKeys {
         val request = focusRequest ?: return
         if (focusHeld) return
         val audio = appContext?.getSystemService(AudioManager::class.java) ?: return
-        focusHeld = audio.requestAudioFocus(request) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+        focusHeld = audio.requestFocus(request) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
         Log.i(TAG, "audio focus regained=$focusHeld")
     }
 
@@ -162,20 +168,18 @@ internal object CarPlayMediaKeys {
 
     private fun start(context: Context) {
         val audio = context.getSystemService(AudioManager::class.java)
-        val request = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-            .setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build(),
-            )
-            .setOnAudioFocusChangeListener({ change ->
-                Log.i(TAG, "audio focus change=$change")
-                // Only a permanent loss moves the car's media keys elsewhere; transient losses come back.
-                if (change == AudioManager.AUDIOFOCUS_LOSS) synchronized(this) { focusHeld = false }
-            }, mainHandler)
-            .build()
-        val granted = audio?.requestAudioFocus(request) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+        val request: Any = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                .setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build(),
+                )
+                .setOnAudioFocusChangeListener(focusListener, mainHandler)
+                .build()
+        } else focusListener
+        val granted = audio?.requestFocus(request) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
         focusRequest = request
         focusHeld = granted
         session = MediaSession(context, "DiPlay CarPlay").apply {
@@ -198,9 +202,18 @@ internal object CarPlayMediaKeys {
         nowPlaying = CarPlayNowPlaying()
         artwork = null
         artworkCache.clear()
-        focusRequest?.let { request -> appContext?.getSystemService(AudioManager::class.java)?.abandonAudioFocusRequest(request) }
+        focusRequest?.let { request -> appContext?.getSystemService(AudioManager::class.java)?.abandonFocus(request) }
         focusRequest = null
         focusHeld = false
+    }
+
+    private fun AudioManager.requestFocus(request: Any): Int =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) requestAudioFocus(request as AudioFocusRequest)
+        else @Suppress("DEPRECATION") requestAudioFocus(focusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
+
+    private fun AudioManager.abandonFocus(request: Any) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) abandonAudioFocusRequest(request as AudioFocusRequest)
+        else @Suppress("DEPRECATION") abandonAudioFocus(focusListener)
     }
 
     private fun publishPlaybackStateLocked() {

@@ -1,5 +1,6 @@
 package com.shilapi.xcertplay.network
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.LinkProperties
@@ -115,7 +116,7 @@ class ExistingWifiManager(
                     hosts = addresses
                     interfaceIndex = iface.index
                     interfaceName = name
-                    connectivity.registerNetworkCallback(NetworkRequest.Builder().clearCapabilities()
+                    connectivity.registerNetworkCallback(NetworkRequest.Builder().withoutDefaultCapabilities()
                         .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
                         .addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN).build(), callback)
                     callbackRegistered = true
@@ -183,3 +184,11 @@ class ExistingWifiManager(
         }
     }
 }
+
+/** Android 6-8 lack the hidden clear method; remove the builder defaults instead. */
+@SuppressLint("NewApi")
+private fun NetworkRequest.Builder.withoutDefaultCapabilities(): NetworkRequest.Builder =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) clearCapabilities()
+    else removeCapability(NetworkCapabilities.NET_CAPABILITY_NOT_RESTRICTED)
+        .removeCapability(NetworkCapabilities.NET_CAPABILITY_TRUSTED)
+        .removeCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)

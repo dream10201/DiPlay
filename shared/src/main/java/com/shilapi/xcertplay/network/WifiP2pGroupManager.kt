@@ -30,6 +30,11 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
+/** Channels have no explicit close before Android 8.1. */
+fun WifiP2pManager.Channel.closeCompat() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) close()
+}
+
 /**
  * Creates a temporary Wi-Fi Direct group owner, preferring 5 GHz, that can also be joined as a legacy AP.
  *
@@ -318,7 +323,7 @@ class WifiP2pGroupManager(
         }
         synchronized(legacyChannelLock) {
             if (activeChannel != null) releaseLegacyChannelRestriction(activeChannel)
-            activeChannel?.close()
+            activeChannel?.closeCompat()
         }
         activeThread?.quitSafely()
     }
@@ -720,7 +725,11 @@ class WifiP2pGroupManager(
         val fiveGhzSupported = runCatching { wifi?.is5GHzBandSupported }.getOrNull()
         val wifiEnabled = runCatching { wifi?.isWifiEnabled }.getOrNull()
         val locationEnabled = runCatching {
-            appContext.getSystemService(LocationManager::class.java)?.isLocationEnabled
+            appContext.getSystemService(LocationManager::class.java)?.let { manager ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) manager.isLocationEnabled
+                else manager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                    manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+            }
         }.getOrNull()
         val required = if (Build.VERSION.SDK_INT >= 33) Manifest.permission.NEARBY_WIFI_DEVICES
             else Manifest.permission.ACCESS_FINE_LOCATION
@@ -827,7 +836,7 @@ class WifiP2pGroupManager(
         }
         synchronized(legacyChannelLock) {
             if (failedChannel != null) releaseLegacyChannelRestriction(failedChannel)
-            failedChannel?.close()
+            failedChannel?.closeCompat()
         }
         failedThread?.quitSafely()
     }

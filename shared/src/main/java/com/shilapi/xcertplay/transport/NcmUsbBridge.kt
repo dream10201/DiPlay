@@ -219,6 +219,16 @@ class NcmUsbBridge internal constructor(
 
     private fun readChunk(timeoutMillis: Long): Int? {
         checkOpen()
+        if (!usbRequestWaitTimeoutSupported) {
+            val transferred = try {
+                connection.bulkTransfer(inEndpoint, readBuffer, LEGACY_BULK_TRANSFER_LIMIT,
+                    timeoutMillis.coerceIn(1, Int.MAX_VALUE.toLong()).toInt())
+            } catch (error: RuntimeException) {
+                throw failSession("NCM read failed", error)
+            }
+            checkOpen()
+            return if (transferred > 0) transferred else null
+        }
         val request = try {
             // Publish and queue atomically with close(), so detach cannot miss a new request.
             synchronized(stateLock) {

@@ -1,6 +1,7 @@
 package com.shilapi.xcertplay.transport
 
 import android.annotation.SuppressLint
+import android.os.Build
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 import java.security.GeneralSecurityException
@@ -48,7 +49,9 @@ object LockdownTlsEngineFactory {
             }
             return context.createSSLEngine(PEER_HOST, PEER_PORT).apply {
                 useClientMode = true
-                sslParameters = sslParameters.apply { endpointIdentificationAlgorithm = null }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    sslParameters = sslParameters.apply { endpointIdentificationAlgorithm = null }
+                }
             }
         } finally {
             password.fill('\u0000')

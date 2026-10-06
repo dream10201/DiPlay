@@ -1,0 +1,50 @@
+name: Build Android 6 APK
+
+on:
+  push:
+    branches: [android6]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      IDENTITY_PK8_B64: ${{ secrets.DIPLAY_IDENTITY_PK8_B64 }}
+      CERTIFICATE_P7B_B64: ${{ secrets.DIPLAY_CERTIFICATE_P7B_B64 }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Reject credential files in public source
+        run: python3 scripts/check_public_tree.py
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools platforms;android-37.0 build-tools;36.0.0 ndk;28.2.13676358
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Provide runtime authentication assets
+        if: env.IDENTITY_PK8_B64 != '' && env.CERTIFICATE_P7B_B64 != ''
+        run: |
+          dir="$RUNNER_TEMP/diplay-auth"
+          mkdir -p "$dir/offline-mfi"
+          echo "$IDENTITY_PK8_B64" | base64 -d > "$dir/offline-mfi/identity.pk8"
+          echo "$CERTIFICATE_P7B_B64" | base64 -d > "$dir/offline-mfi/certificate.p7b"
+          echo "DIPLAY_AUTH_ASSETS_DIR=$dir" >> "$GITHUB_ENV"
+      - name: Test, lint and build
+        run: |
+          task=assembleDebug
+          if [ -n "$DIPLAY_AUTH_ASSETS_DIR" ]; then task=assembleStandaloneDebug; fi
+          ./gradlew :shared:testDebugUnitTest :common:testDebugUnitTest :mobile:lintDebug ":mobile:$task" --stacktrace
+      - uses: actions/upload-artifact@v7
+        with:
+          name: DiPlay-android6
+          path: mobile/build/outputs/apk/debug/*.apk
