@@ -497,6 +497,7 @@ class CarPlayHostActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        DiagnosticUploader.installCrashHandler(this)
         super.onCreate(savedInstanceState)
         NavigationWidgetUpdater.attach(applicationContext)
         CarPlayCallKeys.install(applicationContext)
@@ -3665,6 +3666,7 @@ class CarPlayHostActivity : ComponentActivity() {
                     }
                     activeAirPlaySession = session
                     CarPlayBackgroundSession.active = true
+                    DiagnosticUploader.uploadIfEnabled(this@CarPlayHostActivity, "session_active")
                     reconnectAttempts = 0
                     logThemeState(ThemeModeDiagnostics.Source.SESSION_ACTIVE, resources.configuration)
                     syncAirPlayDarkMode(ThemeModeDiagnostics.Source.SESSION_ACTIVE)
@@ -3763,6 +3765,7 @@ class CarPlayHostActivity : ComponentActivity() {
         when (status) {
             is CarPlayStatus.Failed -> if (status.wifiResetRequired) {
                 wifiRecoveryButton?.visibility = View.VISIBLE
+                DiagnosticUploader.uploadIfEnabled(this, "wifi_reset_required")
             } else {
                 wifiRecoveryButton?.visibility = View.GONE
                 if (status.startupFailure != null) {
@@ -4222,6 +4225,7 @@ class CarPlayHostActivity : ComponentActivity() {
             setConnectionStage(if (startupFailure == WirelessStartupFailure.HOTSPOT_CONFIGURATION) reason
                 else "$reason\n${getString(R.string.wireless_startup_retries_exhausted)}")
             appendLog("wireless startup recovery stopped generation=$restartGeneration reason=$startupFailure retries=${startupRetryBudget.retries}")
+            DiagnosticUploader.uploadIfEnabled(this, "startup_retries_exhausted")
             return
         }
         reconnectScheduled = true
@@ -4235,6 +4239,7 @@ class CarPlayHostActivity : ComponentActivity() {
         }
         reconnectAttempts += 1
         appendLog("$reason; retrying in ${delayMillis}ms generation=$generation startupFailure=$startupFailure startupRetries=${startupRetryBudget.retries}")
+        DiagnosticUploader.uploadIfEnabled(this, "reconnect")
         mainHandler.postDelayed(
             {
                 reconnectScheduled = false

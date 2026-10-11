@@ -57,6 +57,8 @@ data class Iap2IdentificationConfig(
     val chargingConnectors: EvChargingConnectors = EvChargingConnectors.CCS2_TYPE2,
     /** Also offer wheel speed ($PASCD) in the location component; needs [locationInformationEnabled]. */
     val vehicleSpeedEnabled: Boolean = false,
+    /** Declares CarPlayAvailability/CarPlayStartSession; the Bluetooth bootstrap must leave them out. */
+    val carPlaySessionMessagesEnabled: Boolean = true,
 ) {
     constructor(
         name: String,
@@ -129,6 +131,7 @@ internal fun Iap2IdentificationConfig.forWirelessLink(
             locationInformationEnabled = false,
             vehicleStatusEnabled = false,
             vehicleSpeedEnabled = false,
+            carPlaySessionMessagesEnabled = false,
         )
         Iap2WirelessLinkRole.RUNTIME_TUNNEL -> wirelessConfig
     }
@@ -203,6 +206,10 @@ class Iap2IdentificationClient(private val session: Iap2Session) {
                 MESSAGES_RECEIVED_FROM_PHONE + START_LOCATION_INFORMATION + STOP_LOCATION_INFORMATION
             } else {
                 MESSAGES_RECEIVED_FROM_PHONE
+            }
+            if (!config.carPlaySessionMessagesEnabled) {
+                sentMessages = sentMessages.filterNot { it == CARPLAY_START_SESSION }.toIntArray()
+                receivedMessages = receivedMessages.filterNot { it == CARPLAY_AVAILABILITY }.toIntArray()
             }
             if (config.vehicleStatusEnabled) {
                 sentMessages += Iap2VehicleStatus.VEHICLE_STATUS_UPDATE

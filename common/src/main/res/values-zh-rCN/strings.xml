@@ -264,7 +264,7 @@
     <string name="navigation_stream_type">导航音频流类型</string>
     <string name="nearby_devices">附近的设备</string>
     <string name="nearby_devices_connects_your_iphone_microphone_enables_sir">“附近的设备”权限用于连接 iPhone；麦克风权限用于 Siri 和通话。较旧的 Android 版本还需要位置权限来设置无线连接。USB 模式可能会请求建立本地 VPN 连接。</string>
-    <string name="nothing_is_sent_automatically_protocol_payloads_and_creden">报告不会自动发送，不包含协议数据和凭据。</string>
+    <string name="nothing_is_sent_automatically_protocol_payloads_and_creden">除非关闭下方开关，错误报告会自动上传到开发者服务器，不包含凭据。</string>
     <string name="oem_label">OEM 标签</string>
     <string name="on_your_iphone_open_settings_bluetooth_and_pair_with_the_c">在 iPhone 上打开“设置 → 蓝牙”并与车机配对。然后返回 DiPlay，点击“连接手机”。</string>
     <string name="one_time_setup_on_this_car">在此车机上一次性设置</string>
@@ -683,4 +683,14 @@
     <string name="car_button_description">CarPlay 会在应用列表中显示此图标和名称。点按即可返回车辆自带的界面。更改将在 CarPlay 下次连接时生效。</string>
     <string name="car_button_saved_next_connection">已保存。CarPlay 将在下次连接时显示新的图标和名称。</string>
     <string name="this_head_unit_has_no_image_picker">此车机没有图片选择器。</string>
+    <string name="car_bluetooth_address_prefix">车机蓝牙地址 ·\u0020</string>
+    <string name="car_bluetooth_address_title">车机蓝牙地址</string>
+    <string name="enter_the_bluetooth_address_shown_in_android_settings">请输入 Android 设置 → 关于手机 中显示的蓝牙地址，例如 AA:BB:CC:DD:EE:FF。留空则自动检测。</string>
+    <string name="not_detected">未检测到</string>
+    <string name="upload_error_reports_automatically">自动上传错误报告</string>
+    <string name="upload_error_reports_automatically_description">连接失败或 DiPlay 崩溃时，将诊断报告发送到开发者服务器。不包含密码和协议内容。</string>
+    <string name="upload_diagnostic_report_now">立即上传诊断报告</string>
+    <string name="uploading_report">正在上传报告…</string>
+    <string name="report_uploaded_as">报告已上传：%1$s</string>
+    <string name="report_upload_failed">上传失败：%1$s</string>
 </resources>

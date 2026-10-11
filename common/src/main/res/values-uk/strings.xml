@@ -635,4 +635,14 @@
     <string name="car_button_description">CarPlay показує цей значок і назву у списку застосунків. Натисніть його, щоб повернутися на екран автомобіля. Зміни застосуються під час наступного підключення CarPlay.</string>
     <string name="car_button_saved_next_connection">Збережено. CarPlay покаже новий значок і назву під час наступного підключення.</string>
     <string name="this_head_unit_has_no_image_picker">На цьому головному пристрої немає вибору зображень.</string>
+    <string name="car_bluetooth_address_prefix">Bluetooth-адреса автомобіля ·\u0020</string>
+    <string name="car_bluetooth_address_title">Bluetooth-адреса автомобіля</string>
+    <string name="enter_the_bluetooth_address_shown_in_android_settings">Введіть Bluetooth-адресу з Налаштувань Android → Про пристрій, наприклад AA:BB:CC:DD:EE:FF. Залиште порожнім для автовизначення.</string>
+    <string name="not_detected">Не визначено</string>
+    <string name="upload_error_reports_automatically">Автоматично надсилати звіти про помилки</string>
+    <string name="upload_error_reports_automatically_description">У разі збою підключення або аварійного завершення DiPlay надсилати діагностичний звіт на сервер розробника. Паролі та дані протоколу виключено.</string>
+    <string name="upload_diagnostic_report_now">Надіслати діагностичний звіт зараз</string>
+    <string name="uploading_report">Надсилання звіту…</string>
+    <string name="report_uploaded_as">Звіт надіслано як %1$s</string>
+    <string name="report_upload_failed">Помилка надсилання: %1$s</string>
 </resources>

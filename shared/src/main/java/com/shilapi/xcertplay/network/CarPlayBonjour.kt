@@ -109,11 +109,8 @@ object CarPlayBonjourProtocol {
         require('\r' !in unbracketedHost && '\n' !in unbracketedHost) {
             "host must not contain a line break"
         }
-        val receiverDeviceId = deviceId.replace(":", "")
-        require(receiverDeviceId.isNotEmpty()) { "deviceId must contain a hexadecimal value" }
-        require('\r' !in receiverDeviceId && '\n' !in receiverDeviceId) {
-            "deviceId must not contain a line break"
-        }
+        val receiverDeviceId = deviceId.replace(":", "").toULongOrNull(16)?.toString()
+            ?: throw IllegalArgumentException("deviceId must be a hexadecimal MAC address")
         val hostHeader = if (':' in unbracketedHost) {
             "[$unbracketedHost]:$port"
         } else {

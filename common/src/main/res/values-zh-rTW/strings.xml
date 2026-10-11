@@ -683,4 +683,14 @@
     <string name="usb_auto_confirm_active_hint">✓ 無障礙服務已啟用（將自動確認 USB 提示）</string>
     <string name="usb_auto_confirm_dialog_msg">自動確認需要無障礙服務。許多車機未提供系統無障礙設定。\n\n此設定也會為主畫面地圖申請使用情況存取權及顯示在其他應用程式上層的權限。現有無障礙服務會保留。\n\n要透過本機 ADB 授予這三項權限嗎？</string>
     <string name="usb_auto_confirm_status_on">USB 提示自動確認：已啟用</string>
+    <string name="car_bluetooth_address_prefix">車機藍牙地址 · </string>
+    <string name="car_bluetooth_address_title">車機藍牙地址</string>
+    <string name="enter_the_bluetooth_address_shown_in_android_settings">請輸入 Android 設定 → 關於 中顯示的藍牙地址，例如 AA:BB:CC:DD:EE:FF。留空則自動偵測。</string>
+    <string name="not_detected">未偵測到</string>
+    <string name="upload_error_reports_automatically">自動上傳錯誤報告</string>
+    <string name="upload_error_reports_automatically_description">連線失敗或 DiPlay 當機時，將診斷報告傳送到開發者伺服器。不包含密碼和協定內容。</string>
+    <string name="upload_diagnostic_report_now">立即上傳診斷報告</string>
+    <string name="uploading_report">正在上傳報告…</string>
+    <string name="report_uploaded_as">報告已上傳：%1$s</string>
+    <string name="report_upload_failed">上傳失敗：%1$s</string>
 </resources>

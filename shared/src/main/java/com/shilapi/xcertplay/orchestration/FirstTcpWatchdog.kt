@@ -28,6 +28,13 @@ internal class FirstTcpWatchdog(
         cancelTimer = schedule(remaining, ::expire)
     }
 
+    /** The iPhone accepted the control connect; allow it a full timeout to open AirPlay. */
+    @Synchronized fun controlAccepted() {
+        if (terminated || success || firstAcceptNanos != null || firstStartNanos == null) return
+        cancel()
+        cancelTimer = schedule(timeoutMillis, ::expire)
+    }
+
     @Synchronized fun accepted(event: AirPlayTcpAccepted): Boolean {
         if (terminated || event.listener !== listener || event.internal) return false
         if (firstAcceptNanos == null) {

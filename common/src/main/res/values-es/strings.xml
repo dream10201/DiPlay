@@ -623,4 +623,14 @@
     <string name="car_button_description">CarPlay muestra este icono y este nombre en su lista de apps. Tócalo para volver a la pantalla del coche. Los cambios se aplican la próxima vez que CarPlay se conecte.</string>
     <string name="car_button_saved_next_connection">Guardado. CarPlay mostrará el nuevo icono y nombre la próxima vez que se conecte.</string>
     <string name="this_head_unit_has_no_image_picker">Esta unidad principal no tiene selector de imágenes.</string>
+    <string name="car_bluetooth_address_prefix">Dirección Bluetooth del coche ·\u0020</string>
+    <string name="car_bluetooth_address_title">Dirección Bluetooth del coche</string>
+    <string name="enter_the_bluetooth_address_shown_in_android_settings">Introduce la dirección Bluetooth que aparece en Ajustes de Android → Información, como AA:BB:CC:DD:EE:FF. Déjala vacía para detectarla automáticamente.</string>
+    <string name="not_detected">No detectada</string>
+    <string name="upload_error_reports_automatically">Subir informes de error automáticamente</string>
+    <string name="upload_error_reports_automatically_description">Cuando falle una conexión o DiPlay se cierre inesperadamente, envía el informe de diagnóstico al servidor del desarrollador. Se excluyen credenciales y datos de protocolo.</string>
+    <string name="upload_diagnostic_report_now">Subir informe de diagnóstico ahora</string>
+    <string name="uploading_report">Subiendo informe…</string>
+    <string name="report_uploaded_as">Informe subido como %1$s</string>
+    <string name="report_upload_failed">Error al subir: %1$s</string>
 </resources>

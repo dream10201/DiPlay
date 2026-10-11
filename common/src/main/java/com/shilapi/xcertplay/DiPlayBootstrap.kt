@@ -55,6 +55,10 @@ internal object DiPlayPreferences {
     fun savePhone(context: Context, address: String, name: String) {
         prefs(context).edit().putString("phone_address", address).putString("phone_name", name).apply()
     }
+    fun bluetoothAddress(context: Context): String? = prefs(context).getString("bluetooth_address", null)
+    fun saveBluetoothAddress(context: Context, value: String?) {
+        prefs(context).edit().apply { if (value == null) remove("bluetooth_address") else putString("bluetooth_address", value) }.apply()
+    }
     fun autoConnect(context: Context) = prefs(context).getBoolean("auto_connect", false)
     fun saveAutoConnect(context: Context, value: Boolean) {
         prefs(context).edit().putBoolean("auto_connect", value).apply()

@@ -265,7 +265,7 @@
     <string name="navigation_stream_type">Navigation stream type</string>
     <string name="nearby_devices">Nearby devices</string>
     <string name="nearby_devices_connects_your_iphone_microphone_enables_sir">Nearby devices connects your iPhone. Microphone enables Siri and calls. Older Android versions also require Location for wireless setup. USB mode may ask for a local VPN connection.</string>
-    <string name="nothing_is_sent_automatically_protocol_payloads_and_creden">Nothing is sent automatically. Protocol payloads and credentials are excluded.</string>
+    <string name="nothing_is_sent_automatically_protocol_payloads_and_creden">Error reports are uploaded to the developer server unless you turn it off below. Credentials are excluded.</string>
     <string name="oem_label">OEM label</string>
     <string name="on_your_iphone_open_settings_bluetooth_and_pair_with_the_c">On your iPhone, open Settings → Bluetooth and pair with the car. Then return to DiPlay and choose Connect phone.</string>
     <string name="one_time_setup_on_this_car">One-time setup on this car</string>
@@ -683,4 +683,14 @@
     <string name="car_button_description">CarPlay shows this icon and name in its app list. Tap it to return to the car\'s own screen. Changes apply the next time CarPlay connects.</string>
     <string name="car_button_saved_next_connection">Saved. CarPlay shows the new icon and name the next time it connects.</string>
     <string name="this_head_unit_has_no_image_picker">This head unit has no image picker.</string>
+    <string name="car_bluetooth_address_prefix">Car Bluetooth address ·\u0020</string>
+    <string name="car_bluetooth_address_title">Car Bluetooth address</string>
+    <string name="enter_the_bluetooth_address_shown_in_android_settings">Enter the Bluetooth address shown in Android Settings → About, like AA:BB:CC:DD:EE:FF. Leave empty to detect automatically.</string>
+    <string name="not_detected">Not detected</string>
+    <string name="upload_error_reports_automatically">Upload error reports automatically</string>
+    <string name="upload_error_reports_automatically_description">When a connection fails or DiPlay crashes, send the diagnostic report to the developer server. Credentials and payloads are excluded.</string>
+    <string name="upload_diagnostic_report_now">Upload diagnostic report now</string>
+    <string name="uploading_report">Uploading report…</string>
+    <string name="report_uploaded_as">Report uploaded as %1$s</string>
+    <string name="report_upload_failed">Upload failed: %1$s</string>
 </resources>

@@ -71,7 +71,7 @@ class CarPlayBonjourTest {
             "GET /ctrl-int/1/connect HTTP/1.1\r\n" +
                 "Host: [fe80::1]:7000\r\n" +
                 "User-Agent: AirPlay/366.0\r\n" +
-                "AirPlay-Receiver-Device-ID: 020000000002\r\n" +
+                "AirPlay-Receiver-Device-ID: 2199023255554\r\n" +
                 "Connection: close\r\n" +
                 "\r\n",
             CarPlayBonjourProtocol.connectProbeRequest(

@@ -41,6 +41,7 @@ import com.shilapi.xcertplay.mfi.MfiAuthenticationClient
 import com.shilapi.xcertplay.mfi.RemoteMfiAuthenticationClient
 import com.shilapi.xcertplay.mfi.LocalMfiAuthenticationClient
 import com.shilapi.xcertplay.network.CarPlayBonjour
+import com.shilapi.xcertplay.network.CarPlayBonjourEvent
 import com.shilapi.xcertplay.network.diagnosticSummary
 import com.shilapi.xcertplay.network.CarPlayVpnService
 import com.shilapi.xcertplay.network.LocalOnlyHotspotManager
@@ -1266,7 +1267,12 @@ class CarPlayController(
                 // The car hotspot previously used system NSD, which could resolve another interface
                 // or IPv6 while the listener/probe was bound to the AP's IPv4 address.
                 useInterfaceMdns = true,
-                onEvent = { event -> debugLog("wireless bonjour: ${event.diagnosticSummary()}") },
+                onEvent = { event ->
+                    debugLog("wireless bonjour: ${event.diagnosticSummary()}")
+                    if (event is CarPlayBonjourEvent.Probed && event.statusLine?.contains(" 200") == true) {
+                        watchdog.controlAccepted()
+                    }
+                },
                 additionalAddresses = hotspotInfo.hostAddresses.filter { it != hostAddress },
             )
             synchronized(wirelessResourceLock) {
@@ -1375,6 +1381,9 @@ class CarPlayController(
                 timeoutMillis = controlLoopTimeoutMillis(),
                 beforeStartSession = { startedHotspot?.validateReady() },
                 onStartSessionSent = { watchdog.startSessionSent(it.sentAtNanos) },
+                onWiFiConfigurationSent = {
+                    if (!bootstrapIdentification.carPlaySessionMessagesEnabled) watchdog.startSessionSent(it.sentAtNanos)
+                },
                 onIncoming = ::onRouteFrame,
                 onProgress = { message ->
                     diagnostics.controlProgress(message)

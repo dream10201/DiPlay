@@ -29,6 +29,7 @@ class Iap2WirelessControlClient(
         onReady: () -> Unit = {},
         beforeStartSession: () -> Unit = {},
         onStartSessionSent: (Iap2StartSessionSent) -> Unit = {},
+        onWiFiConfigurationSent: (Iap2StartSessionSent) -> Unit = {},
         onIncoming: (Iap2Frame) -> Unit = {},
         onProgress: (String) -> Unit = {},
     ): Iap2WirelessControlResult {
@@ -139,6 +140,7 @@ class Iap2WirelessControlClient(
                             )
                         } else {
                             send(accessoryWiFiConfiguration(endpoint), deadlineNanos)
+                            onWiFiConfigurationSent(Iap2StartSessionSent(System.nanoTime()))
                             stage = later(
                                 stage,
                                 if (postTransport) {
@@ -160,11 +162,15 @@ class Iap2WirelessControlClient(
                     CARPLAY_AVAILABILITY -> {
                         onProgress("iap2 rx=0x4300 carplay-availability")
                         onProgress(carPlayAvailabilityDiagnostic(incoming))
-                        beforeStartSession()
-                        sendStartSession(endpoint, { send(it, deadlineNanos) }, onStartSessionSent)
-                        stage = later(stage, Iap2WirelessControlStage.CARPLAY_START_SENT)
-                        carPlayStartSessionsSent++
-                        onProgress("iap2 tx=0x4301 carplay-start-session")
+                        if (identification.carPlaySessionMessagesEnabled) {
+                            beforeStartSession()
+                            sendStartSession(endpoint, { send(it, deadlineNanos) }, onStartSessionSent)
+                            stage = later(stage, Iap2WirelessControlStage.CARPLAY_START_SENT)
+                            carPlayStartSessionsSent++
+                            onProgress("iap2 tx=0x4301 carplay-start-session")
+                        } else {
+                            onProgress("iap2 0x4301 not sent: waiting for the iPhone CarPlay control service")
+                        }
                     }
 
                     WIRELESS_CARPLAY_UPDATE -> {
